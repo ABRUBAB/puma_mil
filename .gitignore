@@ -1,0 +1,48 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PyTorch checkpoints and models
+*.pth
+*.pt
+*.ckpt
+checkpoints/
+
+# Datasets and large data files
+*.tar
+*.tar.gz
+*.zip
+*.nii
+*.nii.gz
+*.npz
+*.npy
+data/
+datasets/
+raw_data/
+brats2021_extracted/
+temp/
+
+# Results, logs, and outputs
+results/
+latest_outputs/
+output_figs/
+runs/
+*.log
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
