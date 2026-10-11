@@ -26,8 +26,10 @@ class SimpleModalityFusion(nn.Module):
 
 class ABMIL(nn.Module):
     """Attention-Based MIL with Gated Attention (Ilse et al. 2018)."""
-    def __init__(self, d_in: int = 384, d_model: int = 128, d_attn: int = 64):
+    def __init__(self, d_in: int = 384, d_model: int = 128, d_attn: int = 64, d_hidden: int = None):
         super().__init__()
+        if d_hidden is not None:
+            d_model = d_hidden
         self.fusion = SimpleModalityFusion(d_in, d_model)
         self.attn_V = nn.Sequential(nn.Linear(d_model, d_attn), nn.Tanh())
         self.attn_U = nn.Sequential(nn.Linear(d_model, d_attn), nn.Sigmoid())
@@ -104,8 +106,10 @@ class TransMIL(nn.Module):
 
 class CLAM_SB(nn.Module):
     """CLAM Single-Branch with instance-level clustering constraint (Lu et al. 2021)."""
-    def __init__(self, d_in: int = 384, d_model: int = 128, d_attn: int = 64, n_clusters: int = 8):
+    def __init__(self, d_in: int = 384, d_model: int = 128, d_attn: int = 64, n_clusters: int = 8, d_hidden: int = None):
         super().__init__()
+        if d_hidden is not None:
+            d_model = d_hidden
         self.fusion = SimpleModalityFusion(d_in, d_model)
         self.attn_V = nn.Sequential(nn.Linear(d_model, d_attn), nn.Tanh())
         self.attn_U = nn.Sequential(nn.Linear(d_model, d_attn), nn.Sigmoid())
@@ -152,8 +156,9 @@ class CLAM_SB(nn.Module):
 
 class ViTSliceMLP(nn.Module):
     """Deep single-slice MLP baseline (no axial window context)."""
-    def __init__(self, d_in: int = 384, d_hidden: int = 256):
+    def __init__(self, d_in: int = 384, d_hidden: int = 256, window_size: int = None):
         super().__init__()
+        self.window_size = window_size
         self.classifier = nn.Sequential(
             nn.Linear(d_in * 4, d_hidden),
             nn.LayerNorm(d_hidden),
@@ -166,10 +171,8 @@ class ViTSliceMLP(nn.Module):
             nn.Linear(d_hidden // 2, 2),
         )
 
-    def forward(self, t1, t1ce, t2, flair, center_pos=None, **kwargs):
-        if center_pos is not None:
-            # Extract center slice
-            B = t1.size(0)
+    def forward(self, t1, t1ce, t2, flair, seq_mask=None, center_pos=None, **kwargs):
+        if center_pos is not None and not (isinstance(center_pos, torch.Tensor) and center_pos.dtype == torch.bool):
             c = center_pos[0].item() if isinstance(center_pos, torch.Tensor) else int(center_pos)
             s_t1 = t1[:, c, :]
             s_t1ce = t1ce[:, c, :]

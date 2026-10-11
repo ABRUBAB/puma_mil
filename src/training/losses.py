@@ -102,5 +102,10 @@ class PUMALoss(nn.Module):
             "l_bag": l_bag.item(),
             "l_smooth": l_smooth.item(),
             "l_div": l_div.item(),
-            "l_total": total.item()
+            "l_total": total.item(),
+            "loss_center": l_center.item(),
+            "loss_bag": l_bag.item(),
+            "loss_smooth": l_smooth.item(),
+            "loss_div": l_div.item(),
+            "loss_total": total.item(),
         }

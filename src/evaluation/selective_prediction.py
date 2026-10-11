@@ -6,11 +6,11 @@ by deferring uncertain slices based on prediction confidence |p - 0.5|.
 
 import numpy as np
 from sklearn.metrics import f1_score, accuracy_score
-from typing import Dict, List
+from typing import Dict, List, Any
 
 def evaluate_selective_prediction(probs: np.ndarray, labels: np.ndarray,
                                   threshold: float = 0.5,
-                                  coverages: List[float] = None) -> Dict[str, Any]:
+                                  coverages: List[float] = None) -> List[Dict[str, Any]]:
     if coverages is None:
         coverages = [1.0, 0.95, 0.90, 0.85, 0.80, 0.75, 0.70, 0.65, 0.60, 0.55, 0.50]
 
